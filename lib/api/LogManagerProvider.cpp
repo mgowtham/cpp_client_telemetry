@@ -8,24 +8,24 @@
 
 namespace MAT_NS_BEGIN {
 
-    ILogManager * LogManagerProvider::Get(
+    std::unique_ptr<ILogManager> LogManagerProvider::Get(
         ILogConfiguration & config,
         status_t &status
     )
     {
-        return LogManagerFactory::Get(config, status);
+        return std::unique_ptr<ILogManager>(LogManagerFactory::Get(config, status));
     }
 
     // TODO: consider utilizing a default reference
-    ILogManager* LogManagerProvider::Get(
+    std::unique_ptr<ILogManager> LogManagerProvider::Get(
         const char * moduleName,
         status_t& status
     )
     {
-        return LogManagerFactory::Get(moduleName, status);
+        return  std::unique_ptr<ILogManager>(LogManagerFactory::Get(moduleName, status));
     }
 
-    /// <summary>
+     /// <summary>
     /// Releases the LogManager identified by moduleName
     /// <param name="moduleName">Module name</param>
     /// </summary>
