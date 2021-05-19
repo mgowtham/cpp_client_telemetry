@@ -29,7 +29,7 @@ char const* const TEST_STORAGE_FILENAME = "AISendTests.db";
 
 class AITestDebugEventListener : public DebugEventListener
 {
-    const size_t IDX_OK   = 0;
+    const size_t IDX_OK = 0;
     const size_t IDX_FAIL = 1;
     const size_t IDX_PART = 2;
     const size_t IDX_ERR = 3;
@@ -38,8 +38,7 @@ class AITestDebugEventListener : public DebugEventListener
     std::atomic<size_t> counts[5];
 
    public:
-
-    AITestDebugEventListener() 
+    AITestDebugEventListener()
     {
         counts[IDX_OK] = 0;
         counts[IDX_FAIL] = 0;
@@ -48,9 +47,10 @@ class AITestDebugEventListener : public DebugEventListener
         counts[IDX_ADDED] = 0;
     }
 
-    virtual void OnDebugEvent(DebugEvent &evt)
+    virtual void OnDebugEvent(DebugEvent& evt)
     {
-        switch (evt.type) {
+        switch (evt.type)
+        {
         case EVT_HTTP_FAILURE:
             counts[IDX_FAIL]++;
             break;
@@ -61,12 +61,13 @@ class AITestDebugEventListener : public DebugEventListener
             counts[IDX_ERR]++;
             break;
         case EVT_HTTP_STATE:
-            if (evt.param1 == 206) {
+            if (evt.param1 == 206)
+            {
                 counts[IDX_PART]++;
             }
             break;
-        case EVT_ADDED: 
-			counts[IDX_ADDED]++;
+        case EVT_ADDED:
+            counts[IDX_ADDED]++;
             break;
         default:
             break;
@@ -97,6 +98,8 @@ class AISendTests : public ::testing::Test,
     std::string serverAddress;
     HttpServer server;
 
+    ILogConfiguration configuration;
+    std::unique_ptr<ILogManager> logManager;
     ILogger* logger;
 
     std::atomic<bool> isSetup;
@@ -147,7 +150,8 @@ class AISendTests : public ::testing::Test,
     virtual void Initialize(DebugEventListener& debugListener, std::string const& path, bool compression)
     {
         receivedRequests.clear();
-        auto configuration = LogManager::GetLogConfiguration();
+        configuration = ILogConfiguration{};
+        configuration[CFG_STR_PRIMARY_TOKEN] = std::string{TEST_TOKEN};
         configuration[CFG_INT_SDK_MODE] = SdkModeTypes_AI;
         configuration[CFG_STR_COLLECTOR_URL] = (serverAddress + path).c_str();
         configuration[CFG_MAP_HTTP][CFG_BOOL_HTTP_COMPRESSION] = compression;
@@ -167,32 +171,31 @@ class AISendTests : public ::testing::Test,
         configuration["version"] = "1.0.0";
         configuration["config"] = {{"host", __FILE__}};  // Host instance
 
-        LogManager::Initialize(TEST_TOKEN, configuration);
-        LogManager::SetLevelFilter(DIAG_LEVEL_DEFAULT, {DIAG_LEVEL_DEFAULT_MIN, DIAG_LEVEL_DEFAULT_MAX});
-        LogManager::ResumeTransmission();
+        logManager = LogManagerProvider::CreateLogManager(configuration);
+        logManager->SetLevelFilter(DIAG_LEVEL_DEFAULT, {DIAG_LEVEL_DEFAULT_MIN, DIAG_LEVEL_DEFAULT_MAX});
+        logManager->ResumeTransmission();
 
-        LogManager::AddEventListener(DebugEventType::EVT_HTTP_OK, debugListener);
-        LogManager::AddEventListener(DebugEventType::EVT_HTTP_ERROR, debugListener);
-        LogManager::AddEventListener(DebugEventType::EVT_HTTP_FAILURE, debugListener);
-        LogManager::AddEventListener(DebugEventType::EVT_HTTP_STATE, debugListener);
-        LogManager::AddEventListener(DebugEventType::EVT_ADDED, debugListener);
+        logManager->AddEventListener(DebugEventType::EVT_HTTP_OK, debugListener);
+        logManager->AddEventListener(DebugEventType::EVT_HTTP_ERROR, debugListener);
+        logManager->AddEventListener(DebugEventType::EVT_HTTP_FAILURE, debugListener);
+        logManager->AddEventListener(DebugEventType::EVT_HTTP_STATE, debugListener);
+        logManager->AddEventListener(DebugEventType::EVT_ADDED, debugListener);
 
-        logger = LogManager::GetLogger(TEST_TOKEN);
+        logger = logManager->GetLogger(TEST_TOKEN);
     }
 
     virtual void FlushAndTeardown(DebugEventListener& debugListener)
     {
-        LogManager::Flush();
+        logManager->Flush();
 
-        LogManager::RemoveEventListener(DebugEventType::EVT_HTTP_OK, debugListener);
-        LogManager::RemoveEventListener(DebugEventType::EVT_HTTP_ERROR, debugListener);
-        LogManager::RemoveEventListener(DebugEventType::EVT_HTTP_FAILURE, debugListener);
-        LogManager::RemoveEventListener(DebugEventType::EVT_HTTP_STATE, debugListener);
-        LogManager::RemoveEventListener(DebugEventType::EVT_ADDED, debugListener);
+        logManager->RemoveEventListener(DebugEventType::EVT_HTTP_OK, debugListener);
+        logManager->RemoveEventListener(DebugEventType::EVT_HTTP_ERROR, debugListener);
+        logManager->RemoveEventListener(DebugEventType::EVT_HTTP_FAILURE, debugListener);
+        logManager->RemoveEventListener(DebugEventType::EVT_HTTP_STATE, debugListener);
+        logManager->RemoveEventListener(DebugEventType::EVT_ADDED, debugListener);
 
-        LogManager::FlushAndTeardown();
+        logManager->FlushAndTeardown();
 
-        auto &configuration = LogManager::GetLogConfiguration();
         configuration[CFG_INT_SDK_MODE] = SdkModeTypes_CS;
     }
 
@@ -215,14 +218,11 @@ class AISendTests : public ::testing::Test,
 
         if (request.uri.compare("/v2/track/206/errors") == 0)
         {
-            nlohmann::json errors = nlohmann::json::array({
-                { {"index", 0 }, {"statusCode", 500} }
-            });
+            nlohmann::json errors = nlohmann::json::array({{{"index", 0}, {"statusCode", 500}}});
             nlohmann::json content = {
                 {"itemsReceived", 2},
-                {"itemsAccepted", 1}, 
-                {"errors", errors }
-            };
+                {"itemsAccepted", 1},
+                {"errors", errors}};
             response.headers["Content-Type"] = "application/json";
             response.content = content.dump();
             return 206;
@@ -232,18 +232,16 @@ class AISendTests : public ::testing::Test,
         {
             nlohmann::json content = {
                 {"itemsReceived", 2},
-                {"itemsAccepted", 1}, 
-                {"errors", nlohmann::json::array() }
-            };
+                {"itemsAccepted", 1},
+                {"errors", nlohmann::json::array()}};
             response.headers["Content-Type"] = "application/json";
             response.content = content.dump();
             return 206;
         }
 
         nlohmann::json content = {
-            { "itemsReceived" , 1 },
-            { "itemsAccepted" , 1 }
-        };
+            {"itemsReceived", 1},
+            {"itemsAccepted", 1}};
         response.headers["Content-Type"] = "application/json";
         response.content = content.dump();
 
@@ -265,8 +263,7 @@ class AISendTests : public ::testing::Test,
         size_t receivedEvents = 0;
         unsigned timeoutMs = 1000 * timeOutSec;
         auto start = PAL::getUtcSystemTimeMs();
-        while (((PAL::getUtcSystemTimeMs() - start) < timeoutMs) 
-            && (receivedEvents != expectedRequests))
+        while (((PAL::getUtcSystemTimeMs() - start) < timeoutMs) && (receivedEvents != expectedRequests))
         {
             /* Give time for our friendly HTTP server thread to process incoming request */
             std::this_thread::yield();
@@ -303,8 +300,7 @@ class AISendTests : public ::testing::Test,
         unsigned receivedDebugEvents = 0;
         unsigned timeoutMs = 1000 * timeOutSec;
         auto start = PAL::getUtcSystemTimeMs();
-        while (((PAL::getUtcSystemTimeMs() - start) < timeoutMs) 
-            && (receivedDebugEvents != expectedDebugEvents))
+        while (((PAL::getUtcSystemTimeMs() - start) < timeoutMs) && (receivedDebugEvents != expectedDebugEvents))
         {
             /* Give time for our friendly HTTP server thread to process incoming request */
             std::this_thread::yield();
