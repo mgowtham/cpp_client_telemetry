@@ -28,6 +28,7 @@ namespace Microsoft {
                 public:
                     static ILogger^ Initialize(String^ tenantToken);
                     static ILogger^ Initialize(String^ tenantToken, LogConfiguration^ configuration);
+                    static ILogger^ Initialize(String^ tenantToken, LogConfiguration^ configuration, bool isInBackgroundTask);
                     static ILogger^ GetLogger();
                     static ILogger^ GetLogger(String^ tenantToken, String^ source);
                     static ILogger^ GetLogger(String^ source);

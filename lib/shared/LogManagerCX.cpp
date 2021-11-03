@@ -73,6 +73,11 @@ namespace MATW_NS_BEGIN {
 
     ILogger^ LogManager::Initialize(String^ tenantToken, LogConfiguration^ configuration)
     {
+        return Initialize(tenantToken, configuration, false);
+    }
+
+    ILogger^ LogManager::Initialize(String^ tenantToken, LogConfiguration^ configuration, bool isInBackgroundTask)
+    {
         //LOG_TRACE("LogManager::Initialize token=%s, configuration=[...]",FromPlatformString(tenantToken).c_str() );
         m_testCallback = new LogManagerTestCallback();
 
@@ -82,9 +87,12 @@ namespace MATW_NS_BEGIN {
 #ifdef _WINRT_DLL
         //LOG_TRACE("running as _WINRT_DLL");	
         using namespace ::Windows::Storage;
-        m_eventReceiver = new LogManagerEventReceiver(configuration);
-        m_platformEventHandler = ref new PlatformEventHandler();
-        m_platformEventHandler->RegisterReceiver(m_eventReceiver);
+        if (!isInBackgroundTask)
+        {
+            m_eventReceiver = new LogManagerEventReceiver(configuration);
+            m_platformEventHandler = ref new PlatformEventHandler();
+            m_platformEventHandler->RegisterReceiver(m_eventReceiver);
+        }
 
         // If consumer doesn't specify the offline storage path, enable the default one for WinRT
         if (IsPlatformStringEmpty(configuration->OfflineStorage))
