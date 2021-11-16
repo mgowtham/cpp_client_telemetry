@@ -24,7 +24,7 @@ if(APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fobjc-arc")
 
   # iOS build options
-  option(BUILD_IOS           "Build for iOS"               NO)
+  option(BUILD_IOS           "Build for iOS"               YES)
 
   if(BUILD_IOS)
     set(TARGET_ARCH "APPLE")
