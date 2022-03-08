@@ -792,7 +792,7 @@ WARN_LOGFILE           =
 
 INPUT                  = ../../lib/include/public \
                          ../../lib/include/aria \
-                         ../../lib/shared/include
+                         ../lib/shared/include
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -848,7 +848,7 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =  \
+EXCLUDE_PATTERNS       = ctmacros.hpp \
                          Version.hpp.template
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
@@ -2027,7 +2027,7 @@ MACRO_EXPANSION        = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-EXPAND_ONLY_PREDEF     = NO
+EXPAND_ONLY_PREDEF     = YES
 
 # If the SEARCH_INCLUDES tag is set to YES, the include files in the
 # INCLUDE_PATH will be searched if a #include is found.
