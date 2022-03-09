@@ -2060,15 +2060,15 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = _WIN32														\
-                        MATSDK_LIBABI=													\
-			MAT_NS_BEGIN=Microsoft { namespace Applications { namespace Events						\
-			MAT_NS_END=}}													\
-			MAT=Microsoft::Applications::Events										\
-			PAL_NS_BEGIN=Microsoft { namespace Applications { namespace Events { namespace PlatformAbstraction		\
-			PAL_NS_END=}}}													\
-			PAL=::Microsoft::Applications::Events::PlatformAbstraction							\
-			MAT_v1=::Microsoft::Applications::Telemetry
+PREDEFINED             = "_WIN32"													\
+                        "MATSDK_LIBABI="												\
+			"MAT_NS_BEGIN=Microsoft { namespace Applications { namespace Events"						\
+			"MAT_NS_END=}}"													\
+			"MAT=Microsoft::Applications::Events"										\
+			"PAL_NS_BEGIN=Microsoft { namespace Applications { namespace Events { namespace PlatformAbstraction"		\
+			"PAL_NS_END=}}}"												\
+			"PAL=::Microsoft::Applications::Events::PlatformAbstraction"							\
+			"MAT_v1=::Microsoft::Applications::Telemetry"
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The
