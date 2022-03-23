@@ -148,23 +148,18 @@ evt_status_t mat_open_core(
     }
 #endif
     // Create custom worker thread
-    try
+    if (taskDispatcherQueueFn != nullptr && taskDispatcherCancelFn != nullptr && taskDispatcherJoinFn != nullptr)
     {
-        std::shared_ptr<MAT::ITaskDispatcher> taskDispatcher;
-        if (taskDispatcherQueueFn != nullptr && taskDispatcherCancelFn != nullptr && taskDispatcherJoinFn != nullptr)
+        try
         {
-            taskDispatcher = std::make_shared<PAL::TaskDispatcher_CAPI>(taskDispatcherQueueFn, taskDispatcherCancelFn, taskDispatcherJoinFn);
+            auto taskDispatcher = std::make_shared<PAL::TaskDispatcher_CAPI>(taskDispatcherQueueFn, taskDispatcherCancelFn, taskDispatcherJoinFn);
+            clients[code].taskDispatcher = taskDispatcher;
+            clients[code].config.AddModule(CFG_MODULE_TASK_DISPATCHER, taskDispatcher);
         }
-        else
+        catch (...)
         {
-            taskDispatcher = PAL::WorkerThreadFactory::Create();
+            return EFAULT;
         }
-        clients[code].taskDispatcher = taskDispatcher;
-        clients[code].config.AddModule(CFG_MODULE_TASK_DISPATCHER, taskDispatcher);
-    }
-    catch (...)
-    {
-        return EFAULT;
     }
 
     status_t status = static_cast<status_t>(EFAULT);
