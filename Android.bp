@@ -92,7 +92,8 @@ cc_library_shared {
     ],
     static_libs: [
         "libz"
-    ]
+    ],
+    header_libs: ["jni_headers"]
 }
 
 android_library {
