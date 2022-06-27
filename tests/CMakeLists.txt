@@ -12,7 +12,7 @@ set(TESTS_COMMON_SRCS
 
 if (BUILD_FUNC_TESTS OR BUILD_UNIT_TEST)
   if (WIN32 AND CMAKE_TOOLCHAIN_FILE)
-    find_package(gtest REQUIRED)
+    find_package(GTest REQUIRED)
     find_package(SQLite3 REQUIRED)
     find_package(ZLIB REQUIRED)
 

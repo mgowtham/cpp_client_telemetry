@@ -232,8 +232,7 @@ if(BUILD_SHARED_LIBS STREQUAL "ON")
   # find_package(CURL REQUIRED)
   # set(CMAKE_REQUIRED_LIBRARIES "${CURL_LIBRARIES}")
 
-  # find_package(sqlite3 REQUIRED)
-
+  
   add_library(mat SHARED ${SRCS})
 
   # Add flags for obtaining system UUID via IOKit
@@ -242,19 +241,20 @@ if(BUILD_SHARED_LIBS STREQUAL "ON")
       "-framework CoreFoundation -framework IOKit -framework Foundation"
     )
   endif()
-
+  find_package(sqlite3 REQUIRED)
+  find_package(zlib REQUIRED)
   #
   # TODO: allow adding "${Tcmalloc_LIBRARIES}" to target_link_libraries for memory leak debugging
   #
   if (BUILD_STATIC_SQLITE STREQUAL "ON")
     # Build dynamic library, but prefer statically linking sqlite3 and zlib
-    add_library(sqlite3 STATIC IMPORTED GLOBAL)
-    add_library(z STATIC IMPORTED GLOBAL)
+    #add_library(sqlite3 STATIC IMPORTED GLOBAL)
+    #add_library(z STATIC IMPORTED GLOBAL)
     target_link_libraries(mat PRIVATE sqlite3 PUBLIC z ${LIBS} "${CMAKE_THREAD_LIBS_INIT}" "${CMAKE_DL_LIBS}" "${CMAKE_REQUIRED_LIBRARIES}")
   else()
     # Prefer shared libraries for sqlite3 and zlib
-    add_library(sqlite3 SHARED IMPORTED GLOBAL)
-    add_library(z SHARED IMPORTED GLOBAL)
+    #add_library(sqlite3 SHARED IMPORTED GLOBAL)
+    #add_library(z SHARED IMPORTED GLOBAL)
     target_link_libraries(mat PUBLIC sqlite3 PUBLIC z ${LIBS} "${CMAKE_THREAD_LIBS_INIT}" "${CMAKE_DL_LIBS}" "${CMAKE_REQUIRED_LIBRARIES}")
   endif()
 
