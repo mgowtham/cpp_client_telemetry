@@ -1,4 +1,4 @@
-FROM mipsdkcontainer.azurecr.io/library/centos:7
+FROM mipsdkcontainer.azurecr.io/centos:7
 
 USER 0
 
