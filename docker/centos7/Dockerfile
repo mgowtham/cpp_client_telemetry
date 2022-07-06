@@ -1,4 +1,4 @@
-FROM centos/devtoolset-7-toolchain-centos7
+FROM mipsdkcontainer.azurecr.io/library/centos:7
 
 USER 0
 

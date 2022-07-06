@@ -1,4 +1,4 @@
-FROM ubuntu:devel
+FROM mipsdkcontainer.azurecr.io/library/ubuntu:devel
 
 ENV DEBIAN_FRONTEND noninteractive
 
