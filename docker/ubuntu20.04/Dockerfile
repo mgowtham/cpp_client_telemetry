@@ -1,4 +1,4 @@
-FROM mipsdkcontainer.azurecr.io/ubuntu:20.04
+FROM mipsdkcontainer.azurecr.io/ubuntu2004
 
 ENV DEBIAN_FRONTEND noninteractive
 

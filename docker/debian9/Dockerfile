@@ -1,4 +1,4 @@
-FROM mipsdkcontainer.azurecr.io/debian:9
+FROM mipsdkcontainer.azurecr.io/debian9
 
 ENV DEBIAN_FRONTEND noninteractive
 
