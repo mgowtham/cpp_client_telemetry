@@ -115,6 +115,8 @@ namespace Microsoft {
                         /// A boolean that indicates whether the ECS configuration was updated from ECS.
                         /// </summary>
                         bool configUpdateFromECS;
+
+                        bool configSavedToDisk;
                     };
 
                     /// <summary>
